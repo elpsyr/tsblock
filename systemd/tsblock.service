@@ -1,9 +1,25 @@
 [Unit]
-Description = tsblock
+Description = tsblock - Tailscale network interface blocker
 Requires = tailscaled.service
+After = tailscaled.service
+PartOf = tailscaled.service
 
 [Service]
+Type = simple
 ExecStart = /usr/local/sbin/tsblock
+Restart = on-failure
+RestartSec = 5
+KillMode = process
+TimeoutStopSec = 10
+
+# Security hardening
+NoNewPrivileges = true
+PrivateTmp = true
+ProtectSystem = strict
+ProtectHome = true
+ReadWritePaths = /sys/fs/cgroup
+CapabilityBoundingSet = CAP_NET_ADMIN CAP_SYS_ADMIN
+AmbientCapabilities = CAP_NET_ADMIN CAP_SYS_ADMIN
 
 [Install]
 WantedBy = multi-user.target
